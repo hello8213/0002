@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#151326">
+<title>王者塑测试｜寻找你的本命英雄</title>
+<style>
+:root{
+ --bg:#11101e;--card:#201d36;--card2:#292541;
+ --gold:#f4d58d;--purple:#c1adff;--text:#f7f3ff;
+ --muted:#aaa4c1;--line:#3b3555;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;color:var(--text);line-height:1.75;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",
+ "PingFang SC","Microsoft YaHei",sans-serif;
+ background:radial-gradient(ellipse at top,#35254f 0%,transparent 48%),var(--bg);
+}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.wrap{width:min(760px,92%);margin:auto;padding:25px 0 45px}
+header{text-align:center;padding:18px 0 26px}
+.logo{letter-spacing:4px;color:var(--gold);font-size:11px}
+h1{font-size:clamp(30px,8vw,44px);line-height:1.3;color:var(--gold);margin:12px 0}
+.sub{font-size:13px;color:var(--muted)}
+.card{
+ background:linear-gradient(145deg,#282440,#1a182d);
+ border:1px solid var(--line);border-radius:21px;padding:23px;
+ box-shadow:0 14px 45px #0002;
+}
+.hidden{display:none!important}
+.kicker{font-size:11px;letter-spacing:3px;color:var(--gold)}
+h2{font-size:22px;line-height:1.5;margin:12px 0}
+p{margin:10px 0}
+.muted{color:var(--muted);font-size:13px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+.tag,.trait{
+ display:inline-block;padding:5px 11px;border-radius:20px;
+ background:#342c4c;color:#ded2ff;font-size:12px;
+ border:1px solid #484064;
+}
+.primary{
+ width:100%;border:0;border-radius:12px;padding:14px;
+ color:#211a30;font-weight:800;
+ background:linear-gradient(100deg,#f5d88e,#d3b6ff);
+ margin-top:17px;
+}
+.secondary{
+ width:100%;border:1px solid var(--line);border-radius:12px;
+ padding:12px;color:var(--gold);background:transparent;margin-top:10px;
+}
+.progress-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.progress{height:5px;background:#38324c;border-radius:9px;overflow:hidden;margin:12px 0 23px}
+.bar{height:100%;width:5%;background:linear-gradient(90deg,var(--gold),var(--purple));transition:width .2s}
+.question{font-size:21px;margin:12px 0 20px}
+.options{display:grid;gap:10px}
+.option{
+ width:100%;display:flex;align-items:center;gap:12px;text-align:left;
+ padding:13px;border:1px solid var(--line);border-radius:13px;
+ background:#211e36;color:var(--text);transition:.18s;
+}
+.option:hover{border-color:#9580dc}
+.option.selected{border-color:var(--gold);background:#39304b}
+.letter{
+ display:grid;place-items:center;flex-shrink:0;
+ width:30px;height:30px;border-radius:9px;
+ background:#39324f;color:var(--gold);font-weight:bold;
+}
+.option.selected .letter{background:var(--gold);color:#211831}
+.nav{display:flex;gap:10px;margin-top:20px}
+.nav button{flex:1;padding:11px;border-radius:11px;border:1px solid var(--line);background:transparent;color:var(--text)}
+.nav button:disabled{opacity:.3;cursor:not-allowed}
+.result-head{text-align:center}
+.emblem{
+ width:108px;height:108px;margin:18px auto 8px;
+ display:grid;place-items:center;font-size:49px;border-radius:50%;
+ background:radial-gradient(circle,#584570,#28213e);
+ border:2px solid var(--gold);
+}
+.hero-name{font-size:35px;color:var(--gold);margin:4px 0}
+.bigscore{font-size:27px;color:var(--purple);font-weight:800}
+.section{border-top:1px solid var(--line);margin-top:23px;padding-top:20px}
+.section h3{font-size:17px;color:var(--gold);margin:0 0 12px}
+.section p{color:#d8d2e7}
+.trait-list{display:flex;flex-wrap:wrap;gap:7px}
+.rank-row{margin:14px 0}
+.rank-label{display:flex;justify-content:space-between;gap:10px;font-size:13px}
+.rank-track{height:7px;border-radius:9px;background:#39334e;overflow:hidden;margin-top:6px}
+.rank-fill{height:100%;background:linear-gradient(90deg,#b9a4ff,#f5d78e);border-radius:9px}
+.rank-note{font-size:12px;color:var(--muted)}
+.footer{text-align:center;color:#77718e;font-size:12px;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div class="logo">HONOR OF KINGS · PERSONALITY PROFILE</div>
+ <h1>王者塑测试</h1>
+ <div class="sub">20 道情境题 · 40 位英雄 · 探索你的本命英雄</div>
+</header>
+<section id="intro" class="card">
+ <div class="kicker">DISCOVER YOUR SOUL HERO</div>
+ <h2>你的灵魂，更接近哪位王者英雄？</h2>
+ <p>你是运筹帷幄的谋士、自由不羁的刺客、坚定可靠的战士，还是善于守护团队的辅助？</p>
+ <p>本测试从决策、情绪、人际关系、行动方式、价值观等方面建立性格画像，再与英雄画像进行比较。</p>
+ <div class="tags">
+  <span class="tag">20 道题</span>
+  <span class="tag">40 位英雄</span>
+  <span class="tag">统一计分模型</span>
+  <span class="tag">前五名排行</span>
+ </div>
+ <p class="muted">请按照真实的自己作答，而不是选择你认为最厉害的答案。没有正确或错误的选项。</p>
+ <button class="primary" onclick="startTest()">开始测试 →</button>
+</section>
+<section id="quiz" class="card hidden">
+ <div class="progress-row"><span id="counter"></span><span id="percent"></span></div>
+ <div class="progress"><div id="bar" class="bar"></div></div>
+ <div id="category" class="kicker"></div>
+ <h2 id="question" class="question"></h2>
+ <div id="options" class="options"></div>
+ <div class="nav">
+  <button id="prev" onclick="move(-1)">← 上一题</button>
+  <button id="next" onclick="move(1)" disabled>下一题 →</button>
+ </div>
+</section>
+<section id="result" class="card hidden">
+ <div class="result-head">
+  <div class="kicker">YOUR SOUL HERO</div>
+  <div class="emblem" id="heroIcon"></div>
+  <div class="muted">你的第一匹配英雄</div>
+  <div class="hero-name" id="heroName"></div>
+  <div class="bigscore" id="match"></div>
+  <div class="muted">画像相似度 · 非概率或准确率</div>
+  <p id="heroTagline"></p>
+ </div>
+ <div class="section">
+  <h3>✦ 性格画像</h3>
+  <p id="personality"></p>
+  <div id="traits" class="trait-list"></div>
+ </div>
+ <div class="section">
+  <h3>⚔️ 行动与战斗风格</h3>
+  <p id="battle"></p>
+ </div>
+ <div class="section">
+  <h3>☯ 优势与成长方向</h3>
+  <p><strong>优势：</strong><span id="strength"></span></p>
+  <p><strong>成长方向：</strong><span id="weakness"></span></p>
+ </div>
+ <div class="section">
+  <h3>✧ 前五名英雄排行</h3>
+  <p class="muted">排行按画像余弦相似度计算，百分比不代表成为该英雄的概率。</p>
+  <div id="ranking"></div>
+ </div>
+ <div class="section">
+  <h3>♧ 第二倾向与结果稳定性</h3>
+  <p id="second"></p>
+  <p id="stability"></p>
+ </div>
+ <div class="section">
+  <h3>🎮 游戏定位参考</h3>
+  <p id="role"></p>
+ </div>
+ <p class="muted">本测试为自编娱乐模型，英雄画像属于设计假设，未经标准化心理测量或真实用户样本验证。结果仅供娱乐和自我探索。</p>
+ <button class="primary" onclick="restart()">重新测试 ↻</button>
+ <button class="secondary" onclick="copyResult()">复制测试结果</button>
+</section>
+<div class="footer">王者塑测试 · 了解倾向，不给自己设限</div>
+</div>
+<script>
+"use strict";
+/*
+  十个统一性格维度：
+  0 理性分析  1 行动力  2 共情支持  3 独立自主
+  4 战略规划  5 勇气担当  6 耐心细节  7 创造适应
+  8 忠诚协作  9 直觉敏锐
+  每个选项给两个维度各增加 1 分。
+  所有英雄画像均使用同样的十维、1—5 分标尺。
+*/
+const DIMENSIONS = [
+ "理性分析","行动力","共情支持","独立自主","战略规划",
+ "勇气担当","耐心细节","创造适应","忠诚协作","直觉敏锐"
+];
+const questions = [
+ {c:"01 · 决策方式",q:"面对一个复杂的问题，你通常会？",a:[
+  ["搜集信息，分析原因，再作决定",[0,6]],
+  ["先采取行动，在实践中修正",[1,7]],
+  ["考虑相关的人和他们的感受",[2,8]],
+  ["相信自己的判断，寻找独特解法",[3,9]]
+ ]},
+ {c:"02 · 团队角色",q:"在团队合作中，你最自然的角色是？",a:[
+  ["制定计划、判断整体方向",[4,0]],
+  ["主动执行，把任务推进下去",[1,5]],
+  ["照顾成员感受，协调关系",[2,8]],
+  ["独立完成任务，保留个人空间",[3,6]]
+ ]},
+ {c:"03 · 压力应对",q:"当事情突然失控时，你更可能？",a:[
+  ["冷静拆解问题，寻找原因",[0,4]],
+  ["马上行动，先处理最紧急的事",[1,5]],
+  ["观察大家的状态，稳定团队",[2,8]],
+  ["暂时独处，凭直觉重新判断",[3,9]]
+ ]},
+ {c:"04 · 关系需求",q:"你最看重一段关系中的什么？",a:[
+  ["坦诚沟通，彼此理解",[0,2]],
+  ["共同成长，一起实现目标",[1,8]],
+  ["尊重边界，保留独立空间",[3,6]],
+  ["关键时刻可靠，彼此信任",[5,8]]
+ ]},
+ {c:"05 · 判断依据",q:"做出重要选择时，你更依赖什么？",a:[
+  ["证据、逻辑和可验证的信息",[0,6]],
+  ["经验、行动反馈和实际结果",[1,6]],
+  ["整体局势以及未来的可能性",[4,9]],
+  ["价值观、他人感受和内心判断",[2,9]]
+ ]},
+ {c:"06 · 面对错误",q:"队友犯错时，你更可能？",a:[
+  ["指出具体问题，讨论如何改进",[0,6]],
+  ["先协助补救，再复盘原因",[1,8]],
+  ["理解对方的处境，避免羞辱对方",[2,8]],
+  ["调整自己的策略，减少再次受影响",[3,4]]
+ ]},
+ {c:"07 · 竞争态度",q:"面对强劲的竞争者，你会？",a:[
+  ["研究对方的特点，寻找突破口",[0,4]],
+  ["迎接挑战，用行动证明自己",[1,5]],
+  ["坚持自己的节奏，不盲目比较",[3,6]],
+  ["观察变化，寻找意料之外的机会",[7,9]]
+ ]},
+ {c:"08 · 被人误解",q:"当别人误解你的想法时，你通常会？",a:[
+  ["整理事实，清晰解释自己的观点",[0,6]],
+  ["不纠缠，继续做自己认为重要的事",[3,1]],
+  ["尝试理解误会的来源并沟通",[2,8]],
+  ["先观察对方的反应，再决定如何回应",[4,9]]
+ ]},
+ {c:"09 · 行动偏好",q:"如果把人生比作一场对局，你更喜欢？",a:[
+  ["提前规划，逐步建立优势",[4,6]],
+  ["主动出击，把握转瞬即逝的机会",[1,5]],
+  ["保护重要的人，保证整体稳定",[2,8]],
+  ["灵活应变，让自己拥有更多选择",[3,7]]
+ ]},
+ {c:"10 · 核心原则",q:"下面哪件事最让你难以接受？",a:[
+  ["没有依据却强行下结论",[0,6]],
+  ["明明可以行动却一味拖延",[1,5]],
+  ["利用信任，伤害重要的人",[2,8]],
+  ["被控制，不能按照自己的判断选择",[3,7]]
+ ]},
+ {c:"11 · 观察重点",q:"在人群或陌生环境中，你最容易注意到？",a:[
+  ["逻辑漏洞、规则和不一致之处",[0,6]],
+  ["谁在行动，事情接下来会怎么发展",[1,4]],
+  ["别人情绪的变化以及关系氛围",[2,9]],
+  ["不同寻常的细节和新的可能性",[7,9]]
+ ]},
+ {c:"12 · 理想节奏",q:"你更喜欢怎样的生活节奏？",a:[
+  ["有计划，按步骤稳步推进",[4,6]],
+  ["节奏紧凑，边做边调整",[1,7]],
+  ["和重要的人互相支持，共同成长",[2,8]],
+  ["自主安排时间，保留探索空间",[3,7]]
+ ]},
+ {c:"13 · 团队陷入困境",q:"团队即将失败时，你最可能？",a:[
+  ["重整策略，寻找新的解决路线",[0,4]],
+  ["主动承担困难任务，尝试突破",[1,5]],
+  ["帮助队友稳定状态，减少损失",[2,8]],
+  ["绕开僵局，寻找不同的机会",[3,9]]
+ ]},
+ {c:"14 · 成就感",q:"什么事情最容易让你有成就感？",a:[
+  ["终于弄懂复杂问题的原理",[0,6]],
+  ["完成一个有挑战性的目标",[1,5]],
+  ["帮助重要的人解决实际困难",[2,8]],
+  ["创造出独特的作品或新方法",[3,7]]
+ ]},
+ {c:"15 · 朋友需要帮助",q:"朋友遇到烦恼时，你更可能？",a:[
+  ["一起分析问题，找到解决办法",[0,4]],
+  ["陪对方做点事情，帮助他重新行动",[1,2]],
+  ["认真倾听，给予理解和支持",[2,8]],
+  ["尊重对方的空间，等对方准备好",[3,6]]
+ ]},
+ {c:"16 · 面对未知",q:"面对一项没有把握的新挑战，你会？",a:[
+  ["先评估风险，准备备用方案",[0,4]],
+  ["抓住机会，尝试后再调整",[1,7]],
+  ["考虑这件事对自己和他人的影响",[2,6]],
+  ["凭直觉选择方向，并保持自主性",[3,9]]
+ ]},
+ {c:"17 · 隐藏优势",q:"别人最容易忽略你的哪种能力？",a:[
+  ["分析复杂信息，发现关键问题",[0,6]],
+  ["关键时刻承担责任并执行",[1,5]],
+  ["理解他人的感受，维持信任",[2,8]],
+  ["在变化中找到新思路",[7,9]]
+ ]},
+ {c:"18 · 特殊能力",q:"如果能拥有一种能力，你最想要？",a:[
+  ["看清局势规律，提前规划未来",[0,4]],
+  ["突破限制，迅速完成困难任务",[1,5]],
+  ["帮助他人恢复状态，保护伙伴",[2,8]],
+  ["自由探索未知，创造新的可能性",[3,7]]
+ ]},
+ {c:"19 · 你欣赏的强者",q:"你最欣赏哪种强者？",a:[
+  ["冷静、有远见、善于分析",[0,4]],
+  ["勇敢、果断、愿意承担责任",[1,5]],
+  ["可靠、有同理心、值得信任",[2,8]],
+  ["独立、灵活、不受思维定式限制",[3,7]]
+ ]},
+ {c:"20 · 最终选择",q:"你希望别人因为什么而记住你？",a:[
+  ["清醒、聪明、值得信赖的判断力",[0,4]],
+  ["坚韧、勇敢、说到做到的行动力",[1,5]],
+  ["真诚、温暖、关键时刻的陪伴",[2,8]],
+  ["独特、自由、敢于创新的精神",[3,7]]
+ ]}
+];
+/*
+  英雄画像顺序：
+  [理性,行动,共情,独立,战略,勇气,耐心,创造,忠诚,直觉]
+  每一维均为 1—5 分。
+*/
+const heroes = [
+ ["诸葛亮","🪭","中路法师",[5,2,2,3,5,2,4,3,2,4],"冷静分析、善于布局的谋士。","善于拆解复杂局面，重视证据、计划和时机。","全局判断、逻辑思考、复盘能力。","不要让过度分析耽误实际行动。","偏好观察局势、建立优势，再寻找关键机会。"],
+ ["李白","🍶","打野刺客",[2,4,2,5,3,4,2,5,2,5],"自由灵动、追求个人节奏的行动者。","重视自主空间，喜欢变化、探索与独特表达。","适应力、独立判断、创造性。","自由发挥也需要计划与团队配合。","偏好灵活寻找机会，主动改变局面。"],
+ ["韩信","🐎","打野刺客",[2,5,1,5,3,4,2,4,2,4],"敢于打破僵局的行动派。","喜欢快速决策，不愿长期停留在被动局面。","执行力、机动性、主动性。","行动前适当确认风险和资源。","偏好主动带节奏，寻找空档。"],
+ ["赵云","🐉","战士 / 打野",[3,4,3,3,3,5,3,3,4,3],"关键时刻愿意承担责任的人。","重视可靠、担当和实际行动。","韧性、责任感、均衡判断。","不要习惯性地独自承担所有压力。","偏好在关键时刻切入并承担任务。"],
+ ["铠","🛡️","战士",[2,4,2,4,2,5,2,2,3,4],"直接坚定、相信实力的人。","看重行动和明确目标，不喜欢复杂的试探。","决断、勇气、执行力。","并非所有问题都需要正面硬碰硬。","偏好明确目标、集中力量解决问题。"],
+ ["花木兰","⚔️","战士",[3,4,2,3,3,5,4,4,3,3],"坚韧且能灵活切换策略的人。","重视自我提升，能够在原则和适应之间寻找平衡。","韧性、练习能力、适应力。","避免对自己要求过高。","偏好根据局势切换行动方式。"],
+ ["孙悟空","🐒","打野",[2,5,2,3,2,5,2,3,3,5],"热情果断、善于抓住机会的人。","相信行动中的反馈，愿意主动尝试。","反应、勇气、机会意识。","耐心与长期积累同样重要。","偏好把握时机，集中突破。"],
+ ["兰陵王","🌑","打野刺客",[3,3,1,5,4,3,5,2,2,4],"低调观察、谨慎行动的人。","倾向于独立观察，重视信息和行动时机。","细节观察、耐心、独立性。","不要因习惯独处而忽略沟通。","偏好观察薄弱环节后采取行动。"],
+ ["百里守约","🎯","射手",[5,2,1,4,4,2,5,2,2,4],"专注精确、重视细节的人。","愿意耐心准备，追求清晰、准确的判断。","专注、细节意识、耐心。","避免追求完美而错过时机。","偏好观察、预判和精确执行。"],
+ ["伽罗","🏹","射手",[3,2,2,3,3,2,5,2,3,3],"相信长期积累的稳健派。","重视稳定和持续投入，不急于追求短期刺激。","耐心、专注、稳定性。","环境变化时也需要及时调整。","偏好稳步建立优势。"],
+ ["孙尚香","💥","射手",[3,4,2,4,3,4,2,3,2,4],"果断灵活、喜欢掌握主动权的人。","重视个人判断，也愿意寻找更好的行动机会。","主动性、反应、灵活性。","注意风险，不必抓住每一个机会。","偏好机动调整与关键时机。"],
+ ["公孙离","🍁","射手",[2,4,2,5,3,3,3,5,2,4],"不愿被固定模式限制的探索者。","重视创造、自由和应变能力。","适应力、创造力、独立性。","变化太多可能影响稳定积累。","偏好灵活走位、改变节奏。"],
+ ["马可波罗","🔫","射手",[2,4,2,5,2,3,2,4,2,4],"喜欢自己寻找出路的人。","重视行动空间，擅长根据环境调整路线。","灵活性、自主性、应变能力。","自由发挥也要兼顾团队需要。","偏好移动、调整位置、寻找机会。"],
+ ["狄仁杰","⚖️","射手",[5,3,2,3,3,3,4,2,3,3],"讲原则、重证据的理性派。","重视规则、公平和可靠的信息。","分析力、公正、稳定执行。","接受复杂问题有时没有完美答案。","偏好稳健判断与持续输出。"],
+ ["后羿","☀️","射手",[2,3,2,2,3,3,4,2,4,3],"坚持积累、相信努力的人。","愿意持续投入，通过练习建立稳定能力。","耐心、坚持、团队意识。","需要主动适应变化。","偏好持续投入、稳定发挥。"],
+ ["貂蝉","🌸","法师",[3,4,3,3,3,3,3,4,2,5],"敏锐灵动、重视节奏的人。","对变化敏感，喜欢在练习中提升掌控能力。","应变、观察、细腻判断。","不要因为追求完美而给自己过多压力。","偏好灵活应对与持续调整。"],
+ ["王昭君","❄️","法师",[4,2,3,3,5,2,4,3,3,3],"冷静克制、善于规划的人。","重视秩序，习惯先理解环境再采取行动。","规划、冷静、局势意识。","分析之后需要及时执行。","偏好控制节奏、保护行动空间。"],
+ ["小乔","🌷","法师",[2,3,5,2,2,2,3,4,4,3],"亲和乐观、重视关系的人。","重视团队氛围，也希望通过善意与合作创造价值。","亲和力、合作、乐观。","关心别人时也要关注自己的需要。","偏好在团队中协作并持续贡献。"],
+ ["上官婉儿","🖋️","法师",[3,4,2,4,3,4,3,5,2,4],"敢于突破常规的表达者。","喜欢挑战难度，重视创造和自我提升。","创造力、进取心、学习能力。","行动需要节奏和准备。","偏好寻找突破口并主动改变局势。"],
+ ["甄姬","💧","法师",[3,2,5,2,4,2,4,3,4,4],"细腻敏锐、善于察觉氛围的人。","关注情绪和环境变化，重视协作与安全感。","共情、观察、耐心。","不要把所有人的情绪都当成自己的责任。","偏好观察、控制局势、团队协作。"],
+ ["武则天","👑","法师",[4,3,2,4,5,3,3,3,2,4],"重视全局与决策权的人。","喜欢从整体出发，维持目标和方向的清晰。","大局观、规划、决断。","给其他人的意见留出空间。","偏好全局思考与时机把握。"],
+ ["张良","📜","法师",[5,2,2,3,5,2,4,2,3,3],"擅长用规则处理问题的人。","重视秩序、逻辑和可控性。","分析、规划、纪律。","适当尝试开放式方案。","偏好控制风险并为团队创造机会。"],
+ ["不知火舞","🔥","法师 / 刺客",[3,5,2,4,3,4,2,4,2,4],"果断主动、善于应变的人。","喜欢主动创造变化，重视个人发挥空间。","反应、勇气、灵活性。","并不是每个机会都值得追逐。","偏好机动切入和主动进攻。"],
+ ["蔡文姬","🎵","辅助",[2,2,5,2,2,2,4,3,5,3],"重视陪伴和安全感的人。","希望重要的人得到支持，不必独自面对困难。","共情、耐心、可靠。","支持他人不代表要承担所有责任。","偏好保护队友、持续支援。"],
+ ["大乔","🌊","辅助",[4,2,4,3,5,2,3,3,5,3],"善于协调与组织的人。","关注整体节奏，重视沟通和团队协同。","协调、全局意识、责任感。","不要为了照顾整体而忽略自己。","偏好支援、组织、调整团队节奏。"],
+ ["孙膑","⏱️","辅助",[4,2,4,3,5,2,4,3,4,3],"帮助团队更高效运转的人。","善于观察团队需要，关注节奏与协同。","规划、配合、理性判断。","也需要主动表达个人需求。","偏好调整节奏、协助团队协同。"],
+ ["瑶","🦌","辅助",[2,2,5,3,2,2,3,3,5,3],"重视信任与陪伴的人。","希望关系既有支持，也保留舒服的个人空间。","陪伴、信任、关系意识。","也要培养独立处理问题的能力。","偏好支援伙伴、及时回应需要。"],
+ ["盾山","🧱","辅助 / 坦克",[3,3,4,2,3,4,4,2,5,2],"愿意为团队守住底线的人。","重视承诺和安全感，习惯考虑整体风险。","责任感、可靠、风险意识。","保护别人不应成为单方面的义务。","偏好保护队友、创造安全空间。"],
+ ["张飞","🦁","辅助 / 坦克",[2,4,4,2,3,5,3,2,5,3],"平时随和、关键时刻坚定的人。","重视伙伴与责任，遇到重要问题时愿意承担压力。","勇气、忠诚、担当。","表达关心时也要注意方式。","偏好保护团队、承担压力。"],
+ ["牛魔","🐂","辅助 / 坦克",[3,3,4,2,3,4,4,2,5,2],"踏实可靠、不抢风头的人。","更在意事情是否做好，而不是是否获得最多关注。","务实、可靠、团队责任感。","要主动表达自己的观点。","偏好稳固阵线、协作保护。"],
+ ["项羽","🏯","坦克 / 战士",[2,4,3,3,3,5,3,2,5,3],"正直坚定、重视责任的人。","看重承诺与原则，愿意在困难面前承担压力。","坚韧、责任感、执行力。","坚强不等于永远不能求助。","偏好正面承担任务、保护整体。"],
+ ["廉颇","🪨","坦克",[2,4,3,2,3,4,4,2,4,2],"抗压务实、愿意踏实解决问题的人。","不一定追求华丽表现，更重视实际结果。","韧性、可靠、耐力。","给自己留出调整和休息空间。","偏好承担压力、稳定推进。"],
+ ["曜","✨","战士",[2,5,2,4,3,4,2,5,2,4],"热情探索、不断突破自我的人。","喜欢新体验，愿意通过尝试寻找成长路径。","热情、适应力、学习动力。","不要只追求刺激而忽略积累。","偏好主动创造变化。"],
+ ["镜","🪞","打野刺客",[4,4,1,4,4,4,5,3,2,4],"追求精确与掌控的独立者。","愿意投入练习，重视时机、细节和执行。","专注、精进、判断。","避免过分追求控制。","偏好精确操作和关键决策。"],
+ ["澜","🌊","打野刺客",[2,5,2,4,3,4,2,4,2,4],"善于根据变化调整路线的人。","更关注现实局势，愿意及时改变原有计划。","适应、果断、行动效率。","重要信息需要确认，不要过快下结论。","偏好快速判断、灵活切入。"],
+ ["阿轲","🌹","打野刺客",[3,4,1,4,4,3,3,3,2,5],"善于观察机会的独立行动者。","习惯寻找关键节点，倾向于集中精力解决问题。","观察、果断、机会判断。","别因追求效率而忽略团队信息。","偏好寻找突破口、把握时机。"],
+ ["典韦","🐺","战士 / 打野",[2,5,2,3,2,5,2,2,3,4],"认定目标就坚持行动的人。","重视结果，喜欢清晰直接的执行方式。","韧性、专注、执行力。","适时重新评估局势，而非一味坚持。","偏好持续投入、正面解决问题。"],
+ ["吕布","🔱","战士 / 坦克",[2,4,2,4,2,5,3,2,3,4],"敢于直面挑战的独立者。","希望靠实力解决问题，不喜欢绕弯子。","勇气、自信、抗压。","合作并不意味着失去独立性。","偏好直面挑战、承担风险。"],
+ ["司马懿","🌘","法师 / 刺客",[4,3,1,5,5,3,4,3,2,5],"克制观察、重视时机的思考者。","习惯先理解环境，不轻易暴露全部想法。","耐心、观察、战略思考。","谨慎不应变成错失沟通的理由。","偏好等待信息充分后采取行动。"],
+ ["明世隐","🔮","辅助",[3,2,5,2,3,2,4,2,5,3],"通过协作和支持创造价值的人。","相信稳定配合与持续支持的重要性。","支持、专注、关系维护。","不要让自我价值完全依附于别人。","偏好持续支援与协同。"],
+ ["姜子牙","📚","法师 / 辅助",[4,2,2,3,5,2,5,3,3,4],"关注长期价值的规划者。","愿意为长远目标耐心积累，重视整体发展。","远见、耐心、战略意识。","规划也需要短期反馈和行动。","偏好长线思考、全局布局。"],
+ ["海月","🌙","法师",[4,2,2,5,3,2,4,4,2,4],"拥有独立精神世界的思考者。","重视内在体验、独立判断和专注。","内省、独立性、专注。","可以适度分享自己的真实想法。","偏好集中注意力处理关键问题。"],
+ ["女娲","🌌","法师",[4,2,2,4,5,2,4,5,3,4],"喜欢构建秩序与可能性的人。","既重视整体结构，也喜欢创造新的解法。","规划、创造力、大局观。","不要让宏观计划取代实际行动。","偏好规划空间、全局判断。"],
+ ["元歌","🎭","刺客",[4,3,1,5,4,3,5,5,2,4],"不愿按常规思路解决问题的人。","喜欢研究复杂问题，享受发现独特解法。","创造力、分析、独立探索。","复杂方案未必总比简单方案有效。","偏好精细操作和策略变化。"]
+];
+let current = 0;
+let answers = Array(questions.length).fill(null);
+let lastResult = "";
+function startTest(){
+ current = 0;
+ answers = Array(questions.length).fill(null);
+ document.getElementById("intro").classList.add("hidden");
+ document.getElementById("result").classList.add("hidden");
+ document.getElementById("quiz").classList.remove("hidden");
+ renderQuestion();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderQuestion(){
+ const q = questions[current];
+ document.getElementById("counter").textContent =
+  `第 ${current+1} / ${questions.length} 题`;
+ document.getElementById("percent").textContent =
+  `${Math.round((current+1)/questions.length*100)}%`;
+ document.getElementById("bar").style.width =
+  `${(current+1)/questions.length*100}%`;
+ document.getElementById("category").textContent = q.c;
+ document.getElementById("question").textContent = q.q;
+ const container = document.getElementById("options");
+ container.replaceChildren();
+ q.a.forEach((answer,index)=>{
+  const button = document.createElement("button");
+  button.className = "option" +
+   (answers[current]===index ? " selected" : "");
+  const letter = document.createElement("span");
+  letter.className = "letter";
+  letter.textContent = ["A","B","C","D"][index];
+  const label = document.createElement("span");
+  label.textContent = answer[0];
+  button.append(letter,label);
+  button.onclick = ()=>{
+   answers[current] = index;
+   renderQuestion();
+  };
+  container.appendChild(button);
+ });
+ document.getElementById("prev").disabled = current===0;
+ document.getElementById("next").disabled = answers[current]===null;
+ document.getElementById("next").textContent =
+  current===questions.length-1 ? "查看结果 →" : "下一题 →";
+}
+function move(direction){
+ if(direction===1 && answers[current]===null) return;
+ if(direction===1 && current===questions.length-1){
+  calculate();
+  return;
+ }
+ current = Math.max(0,Math.min(questions.length-1,current+direction));
+ renderQuestion();
+}
+function cosine(a,b){
+ let dot=0,aa=0,bb=0;
+ for(let i=0;i<DIMENSIONS.length;i++){
+  dot += a[i]*b[i];
+  aa += a[i]*a[i];
+  bb += b[i]*b[i];
+ }
+ if(aa===0 || bb===0) return 0;
+ return dot/(Math.sqrt(aa)*Math.sqrt(bb));
+}
+function calculate(){
+ if(answers.some(a=>a===null)){
+  alert("请先完成全部 20 道题。");
+  return;
+ }
+ const user = Array(DIMENSIONS.length).fill(0);
+ // 选项为两个维度分别贡献 1 分。
+ answers.forEach((answerIndex,questionIndex)=>{
+  const dimensions = questions[questionIndex].a[answerIndex][1];
+  dimensions.forEach(d=>user[d] += 1);
+ });
+ // 所有英雄均采用相同的十维画像和相同的余弦相似度算法。
+ const ranked = heroes.map((data,index)=>{
+  const profile = data[3];
+  return {
+   index,
+   data,
+   similarity: cosine(user,profile)
+  };
+ }).sort((a,b)=>b.similarity-a.similarity || a.index-b.index);
+ const winner = ranked[0];
+ const second = ranked[1];
+ const gap = winner.similarity-second.similarity;
+ document.getElementById("quiz").classList.add("hidden");
+ document.getElementById("result").classList.remove("hidden");
+ document.getElementById("heroIcon").textContent = winner.data[1];
+ document.getElementById("heroName").textContent = winner.data[0];
+ document.getElementById("match").textContent =
+  Math.round(winner.similarity*100)+"%";
+ document.getElementById("heroTagline").textContent = winner.data[4];
+ document.getElementById("personality").textContent = winner.data[5];
+ document.getElementById("battle").textContent = winner.data[8];
+ document.getElementById("strength").textContent = winner.data[6];
+ document.getElementById("weakness").textContent = winner.data[7];
+ document.getElementById("role").textContent =
+  `你的第一匹配英雄定位是「${winner.data[2]}」。`+
+  "这只是性格画像与游戏定位的联想，并不意味着你只能玩这个位置。";
+ const traits = document.getElementById("traits");
+ traits.replaceChildren();
+ // 取用户得分最高的四个维度，形成个性化标签。
+ const topDimensions = user.map((score,index)=>({score,index}))
+  .sort((a,b)=>b.score-a.score || a.index-b.index)
+  .slice(0,4);
+ topDimensions.forEach(item=>{
+  const span = document.createElement("span");
+  span.className = "trait";
+  span.textContent = DIMENSIONS[item.index];
+  traits.appendChild(span);
+ });
+ const ranking = document.getElementById("ranking");
+ ranking.replaceChildren();
+ ranked.slice(0,5).forEach((item,index)=>{
+  const row = document.createElement("div");
+  row.className = "rank-row";
+  const label = document.createElement("div");
+  label.className = "rank-label";
+  const name = document.createElement("span");
+  name.textContent = `${index+1}. ${item.data[0]} · ${item.data[2]}`;
+  const value = document.createElement("span");
+  value.textContent = `${Math.round(item.similarity*100)}%`;
+  label.append(name,value);
+  const track = document.createElement("div");
+  track.className = "rank-track";
+  const fill = document.createElement("div");
+  fill.className = "rank-fill";
+  fill.style.width = `${item.similarity*100}%`;
+  track.appendChild(fill);
+  row.append(label,track);
+  ranking.appendChild(row);
+ });
+ document.getElementById("second").textContent =
+  `第二倾向是 ${second.data[0]}（${second.data[2]}），`+
+  `画像相似度为 ${Math.round(second.similarity*100)}%。`;
+ let stability;
+ if(gap<0.015){
+  stability = "第一名与第二名的相似度非常接近，当前结果无法明显区分两种倾向。";
+ }else if(gap<0.05){
+  stability = "前两名差距较小，建议把它们理解为并列风格的候选英雄。";
+ }else{
+  stability = "第一名在当前画像模型中领先第二名，但这不代表结果已经经过现实验证。";
+ }
+ document.getElementById("stability").textContent = stability;
+ lastResult =
+  `王者塑测试结果：第一匹配英雄：${winner.data[0]}（${winner.data[2]}），`+
+  `画像相似度${Math.round(winner.similarity*100)}%；`+
+  `第二倾向：${second.data[0]}（${Math.round(second.similarity*100)}%）。`+
+  `性格画像：${winner.data[5]}`;
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function restart(){
+ document.getElementById("result").classList.add("hidden");
+ document.getElementById("intro").classList.remove("hidden");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+async function copyResult(){
+ if(!lastResult) return;
+ try{
+  await navigator.clipboard.writeText(lastResult);
+  alert("测试结果已复制！");
+ }catch(error){
+  const textarea = document.createElement("textarea");
+  textarea.value = lastResult;
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  let copied = false;
+  try{copied=document.execCommand("copy")}catch(e){}
+  textarea.remove();
+  if(copied){
+   alert("测试结果已复制！");
+  }else{
+   prompt("请手动复制以下结果：",lastResult);
+  }
+ }
+}
+</script>
+</body>
+</html>
+
